@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import struct, string, math
+import struct, string, math, copy
 
 class SudokuBoard:
     """This will be the sudoku board game object your player will manipulate."""

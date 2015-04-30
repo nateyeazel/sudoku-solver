@@ -15,6 +15,7 @@ class boardCell:
         if value in self.possibleVals:
             self.possibleVals.remove(value)
 
+
 class MyBoard:
     def __init__(self, sb, bsize):
         self.boardSize = bsize
@@ -54,6 +55,15 @@ class MyBoard:
                     subsquareMates.append(tile)
         return subsquareMates
 
+    def checkComplete(self):
+        intBoard = []
+        for i in range(self.boardSize):
+            intBoard.append([])
+            for j in range(self.boardSize):
+                intBoard[i][j] = self.board[i][j].cellVal
+
+        return is_complete(intBoard)
+
     def p(self):
         for i in range(self.boardSize):
             for j in range(self.boardSize):
@@ -62,6 +72,27 @@ class MyBoard:
                 else:
                     print "(" + str(self.board[i][j].possibleVals) + ")"
             print "\n"
+
+def backTracking(board):
+    """Simplest Backtracking Function, it starts at the top left of the board and then just runs through all possible values."""
+    bsize = board.boardSize
+    for i in range(bsize):
+        for j in range(bsize):
+            tile = board[i][j]
+            if tile.cellVal == 0:
+                for value in tile.possibleVals:
+                    tempBoard = copy.deepcopy(board)
+                    tempBoard.addValue(value, i, j)
+                    if i == bsize - 1 && j == bsize - 1:
+                        if checkComplete(tempBoard):
+                            return result
+                    if tempBoard.checkConsistent():
+                        result = backTracking(tempBoard)
+                    if result != False:
+                        return result
+            return False
+
+
 
 
 def boardTest(file):
