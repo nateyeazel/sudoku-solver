@@ -56,17 +56,62 @@ class SudokuBoard:
 
 class boardCell:
     """Holds the necessary information about a cell"""
-    def __init__(self, BoardSize, value):
+    def __init__(self, BoardSize, value, section):
         self.cellVal = value
         self.possibleVals = set(range(1, BoardSize))
         self.previouslyTried = 0
+        self.boardSection = section
 
     def setCell(self, value):
         self.cellVal = value
 
     def removePossibleVal(self, value):
-        self.possibleVals.remove(value)
+        if value in self.possibleVals:
+            self.possibleVals.remove(value)
 
+
+
+class MyBoard:
+    def __init__(self, sb, bsize):
+        self.boardSize = bsize
+        self.board = []
+        subsquare = int(math.sqrt(bsize))
+        #Make empty board of cells with all 0's
+        for i in range(0, bsize):
+            self.board.append([])
+            for j in range(0, bsize):
+                boardCol = j // subsquare
+                boardRow = i // subsquare
+                boardSection =  boardRow * subsquare + boardCol
+                self.board[i].append(boardCell(bsize, 0, boardSection))
+        #Search through board of ints for non-zero values, and set board
+        for i in range(0, bsize):
+            for j in range(0, bsize):
+                if sb[i][j] != 0:
+                    self.addValue(sb[i][j], i, j)
+
+
+    def addValue(self, value, row, col):
+        self.board[row][col].setCell(value)
+        for i in range(BoardSize):
+            if i != col:
+                self.board[row][i].removePossibleVal(value)
+            if i != row:
+                self.board[i][col].removePossibleVal(value)
+        subsquareMates = self.getSubsquareMates(self.board[row][col])
+        for tile in subsquareMates:
+            tile.removePossibleVal(value)
+
+
+
+    def getSubsquareMates(self, cell):
+        currentSection = cell.boardSection
+        subsquareMates = []
+        for i in range(self.boardSize):
+            for tile in self.board[i]:
+                if tile.boardSection == currentSection:
+                    subsquareMates.append(tile)
+        return subsquareMates
 
 def parse_file(filename):
     """Parses a sudoku text file into a BoardSize, and a 2d array which holds
@@ -74,11 +119,11 @@ def parse_file(filename):
     empty."""
 
     f = open(filename, 'r')
-    BoardSize = int( f.readline())
+    BoardSize = int(f.readline())
     NumVals = int(f.readline())
 
     #initialize a blank board
-    board= [ [ 0 for i in range(BoardSize) ] for j in range(BoardSize) ]
+    board = [[ 0 for i in range(BoardSize) ] for j in range(BoardSize) ]
 
     #populate the board with initial values
     for i in range(NumVals):
@@ -136,9 +181,8 @@ def solve(initial_board, forward_checking = False, MRV = False, MCV = False,
     print "I'm simply returning initial_board for demonstration purposes."
     return initial_board
 
-def forwardCheck(initial_board):
-#implementing forward checking
+# def forwardCheck(initial_board):
+# #implementing forward checking
 
-def MRV(initial_board):
-
-
+# def MRV(initial_board):
+# #
