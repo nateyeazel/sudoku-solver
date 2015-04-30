@@ -11,7 +11,7 @@ def backTracking(board):
                     tempBoard = copy.deepcopy(board)
                     tempBoard.addValue(value, i, j)
                     if i == bsize - 1 & j == bsize - 1:
-                        if checkComplete(tempBoard):
+                        if tempBoard.checkComplete():
                             return tempBoard
                     if tempBoard.checkConsistent():
                         result = backTracking(tempBoard)
