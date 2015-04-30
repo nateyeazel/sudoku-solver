@@ -10,9 +10,9 @@ def backTracking(board):
                 for value in tile.possibleVals:
                     tempBoard = copy.deepcopy(board)
                     tempBoard.addValue(value, i, j)
-                    if i == bsize - 1 && j == bsize - 1:
+                    if i == bsize - 1 & j == bsize - 1:
                         if checkComplete(tempBoard):
-                            return result
+                            return tempBoard
                     if tempBoard.checkConsistent():
                         result = backTracking(tempBoard)
                     if result != False:
