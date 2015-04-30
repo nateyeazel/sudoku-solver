@@ -54,6 +54,14 @@ class MyBoard:
                     subsquareMates.append(tile)
         return subsquareMates
 
+    def checkConsistent(self):
+        for i in range(self.boardSize):
+            for j in range(self.boardSize):
+                cell = self.board[i][j]
+                if cell.cellVal == 0 and len(cell.possibleVals) == 0:
+                    return False
+        return True
+
     def p(self):
         for i in range(self.boardSize):
             for j in range(self.boardSize):
@@ -69,3 +77,10 @@ def boardTest(file):
     m = MyBoard(sb, len(sb))
     m.p()
 
+def test():
+    sb = parse_file("input_puzzles/easy/4_4.sudoku")
+    m = MyBoard(sb, len(sb))
+    m.addValue(3, 0, 3)
+    m.addValue(1, 0, 2)
+    m.p()
+    return m.checkConsistent()
