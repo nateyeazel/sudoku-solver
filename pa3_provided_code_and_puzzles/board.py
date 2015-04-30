@@ -60,9 +60,9 @@ class MyBoard:
         for i in range(self.boardSize):
             intBoard.append([])
             for j in range(self.boardSize):
-                intBoard[i][j] = self.board[i][j].cellVal
-
-        return is_complete(intBoard)
+                intBoard[i].append(self.board[i][j].cellVal)
+        sboard = SudokuBoard(self.boardSize, intBoard)
+        return is_complete(sboard)
 
     def checkConsistent(self):
         for i in range(self.boardSize):
