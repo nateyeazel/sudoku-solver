@@ -54,6 +54,20 @@ class SudokuBoard:
             else:
                 print sep
 
+class boardCell:
+    """Holds the necessary information about a cell"""
+    def __init__(self, BoardSize, value):
+        self.cellVal = value
+        self.possibleVals = set(range(1, BoardSize))
+        self.previouslyTried = 0
+
+    def setCell(self, value):
+        self.cellVal = value
+
+    def removePossibleVal(self, value):
+        self.possibleVals.remove(value)
+
+
 def parse_file(filename):
     """Parses a sudoku text file into a BoardSize, and a 2d array which holds
     the value of each cell. Array elements holding a 0 are considered to be
@@ -126,4 +140,5 @@ def forwardCheck(initial_board):
 #implementing forward checking
 
 def MRV(initial_board):
+
 
