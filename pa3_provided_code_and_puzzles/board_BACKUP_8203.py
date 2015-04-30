@@ -55,6 +55,7 @@ class MyBoard:
                     subsquareMates.append(tile)
         return subsquareMates
 
+<<<<<<< HEAD
     def checkComplete(self):
         intBoard = []
         for i in range(self.boardSize):
@@ -63,7 +64,7 @@ class MyBoard:
                 intBoard[i][j] = self.board[i][j].cellVal
 
         return is_complete(intBoard)
-
+=======
     def checkConsistent(self):
         for i in range(self.boardSize):
             for j in range(self.boardSize):
@@ -71,6 +72,7 @@ class MyBoard:
                 if cell.cellVal == 0 and len(cell.possibleVals) == 0:
                     return False
         return True
+>>>>>>> origin/master
 
     def p(self):
         for i in range(self.boardSize):
