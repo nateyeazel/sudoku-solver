@@ -3,42 +3,33 @@ from board import *
 def sudokuSolve(board):
     """The solver function which will be called with all the different types of value selection and tile selection."""
     #board.p()
+    #print board.firstBlankRow, board.firstBlankColumn
     print board.squaresFilled
     bsize = board.boardSize
-    tileList = chooseUnassignedTiles(board, "MCV")
+    chosenTile = chooseUnassignedTile(board, "BASIC")
 
-    # for i in range(bsize):
-    #     for j in range(bsize):
-    #         tile = board.board[i][j]
-            # if tile.cellVal == 0:
-    for tile in tileList:
-        valList = chooseValue(board, tile, "LCV")
-        for value in valList:
-            newBoard = copy.deepcopy(board)
-            result = False
-            # True unless no possible vals in any modified square
-            if newBoard.addValue(value, tile.row, tile.column, True):
-                if newBoard.isFull():
-                    return newBoard
-                result = sudokuSolve(newBoard)
-                if result is not False:
-                    return result
+    valList = chooseValue(board, chosenTile, "BASIC")
+    for value in valList:
+        newBoard = copy.deepcopy(board)
+        result = False
+        # True unless no possible vals in any modified square
+        if newBoard.addValue(value, chosenTile.row, chosenTile.column, True):
+            if newBoard.isFull():
+                return newBoard
+            result = sudokuSolve(newBoard)
+            if result is not False:
+                return result
     return False
 
-def chooseUnassignedTiles(board, typ):
+def chooseUnassignedTile(board, typ):
     """Returns a tile to assign to. Implementing Backtracking"""
-    tileList = []
-    bsize = board.boardSize
-    for i in range(bsize):
-            for j in range(bsize):
-                tile = board.board[i][j]
-                if tile.cellVal == 0:
-                    tileList.append(tile)
     if typ == "BASIC":
-        return tileList
+        return board.board[board.firstBlankRow][board.firstBlankColumn]
 
     if typ == "MCV":
-        return sorted(tileList, key = lambda tile: -checkAffectedTiles(board, tile))
+        if len(board.minRemainingValues) == 0:
+            board.findMinimumRemainingValues()
+        return board.minRemainingValues[0]
 
     if typ == "MRV":
         return sorted(tileList, key = lambda tile: len(tile.possibleVals))
@@ -82,5 +73,4 @@ def countRemovedPossibilities(board, tile, val):
                 valConstraints += 1
             if board.board[row][i].cellVal == 0 and i != column:
                 valConstraints += 1
-        #
 

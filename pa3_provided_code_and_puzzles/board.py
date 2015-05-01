@@ -26,6 +26,9 @@ class MyBoard:
         self.board = []
         subsquare = int(math.sqrt(bsize))
         self.squaresFilled = 0
+        self.firstBlankRow = 0
+        self.firstBlankColumn = 0
+        self.minRemainingValues = []
         #Make empty board of cells with all 0's
         for i in range(0, bsize):
             self.board.append([])
@@ -41,21 +44,46 @@ class MyBoard:
                     self.addValue(sb[i][j], i, j, True)
 
     def addValue(self, value, row, col, fwd):
-        self.board[row][col].setCell(value)
+        tile = self.board[row][col]
+        tile.setCell(value)
         self.squaresFilled += 1
-        if fwd:
+
+        if tile in self.minRemainingValues:
+            self.minRemainingValues.remove(tile)
+
+        if row == self.firstBlankRow and col == self.firstBlankColumn:
+            self.updateFirstBlank(row, col)
+        if fwd:  #update the possible values of affected tiles
             for i in range(self.boardSize):
-                if i != col:
-                    if self.board[row][i].removePossibleVal(value) is False:
-                        return False
-                if i != row:
-                    if self.board[i][col].removePossibleVal(value) is False:
-                        return False
-            subsquareMates = self.getSubsquareMates(self.board[row][col])
-            for tile in subsquareMates:
-                if tile.removePossibleVal(value) is False:
-                    return False
+                for j in range(self.boardSize):
+                    if row == i and col == j:
+                        continue
+                    if self.board[i][j].boardSection == tile.boardSection:
+                        if self.board[i][j].removePossibleVal(value) is False:
+                            return False
+                        continue
+                    if i == tile.row and value in self.board[i][j].possibleVals:
+                        if self.board[i][j].removePossibleVal(value) is False:
+                            return False
+                        continue
+                    if j == tile.column and value in self.board[i][j].possibleVals:
+                        if self.board[i][j].removePossibleVal(value) is False:
+                            return False
         return True
+
+    def updateFirstBlank(self, row, col):
+        #This function finds the first empty square starting in the top left
+        for i in range(col, self.boardSize):  #check the rest of the current row
+            if self.board[row][i].cellVal == 0:
+                self.firstBlankRow = row
+                self.firstBlankColumn = i
+                return
+        for i in range(row, self.boardSize):
+            for j in range(self.boardSize):
+                if self.board[i][j].cellVal == 0:
+                    self.firstBlankRow = i
+                    self.firstBlankColumn = j
+                    return
 
     def removeValCount(self, tile, value):
         count = 0
@@ -63,8 +91,7 @@ class MyBoard:
             for j in range(self.boardSize):
                 if tile.row == i and tile.column == j:
                     continue
-                inSection = self.board[i][j].boardSection == tile.boardSection
-                if inSection:
+                if self.board[i][j].boardSection == tile.boardSection:
                     if value in self.board[i][j].possibleVals:
                         count += 1
                     continue
@@ -74,14 +101,32 @@ class MyBoard:
                     count +=1
         return count
 
-    def getSubsquareMates(self, cell):
-        currentSection = cell.boardSection
-        subsquareMates = []
+    def findMinimumRemainingValues(self):
+        print "MIN REMAINING VALUES CALLED"
+        minRemain = float("inf")
         for i in range(self.boardSize):
-            for tile in self.board[i]:
-                if tile.boardSection == currentSection:
-                    subsquareMates.append(tile)
-        return subsquareMates
+                for j in range(self.boardSize):
+                    cell = self.board[i][j]
+                    if cell.cellVal == 0:
+                        if len(cell.possibleVals) < minRemain:
+                            self.minRemainingValues = [cell]
+                        if len(cell.possibleVals) == minRemain:
+                            self.minRemainingValues.append(cell)
+
+    def getAffectedCells(self, cell):
+        cellList = []
+        for i in range(self.boardSize):
+            for j in range(self.boardSize):
+                cell = self.board[i][j]
+                if cell.boardSection == section and cell.cellVal == 0:
+                    cellList.append(cell)
+                    continue
+                if board.board[i][column].cellVal == 0 and i != row:
+                    cellList.append(cell)
+                    continue
+                if board.board[row][i].cellVal == 0 and i != column:
+                    cellList.append(cell)
+        return cellList
 
     def checkComplete(self):
         intBoard = []
@@ -96,6 +141,7 @@ class MyBoard:
         if self.squaresFilled == self.boardSize * self.boardSize:
             return True
         return False
+
 
 
     # def checkConsistent(self, tile, typ):
