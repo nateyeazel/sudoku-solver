@@ -2,7 +2,7 @@ from action import *
 
 
 def ttest():
-    sb = parse_file("input_puzzles/easy/9_9.sudoku")
+    sb = parse_file("input_puzzles/more/25x25/25x25.17.sudoku")
     m = MyBoard(sb, len(sb))
     b = sudokuSolve(m)
     b.p()

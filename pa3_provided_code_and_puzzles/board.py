@@ -9,6 +9,7 @@ class boardCell:
         self.boardSection = section
         self.row = row
         self.column = column
+        self.constrainedCells = 3 * BoardSize - 2 * int(math.sqrt(BoardSize)) - 1
 
     def setCell(self, value):
         self.cellVal = value
@@ -18,6 +19,7 @@ class boardCell:
             self.possibleVals.remove(value)
             if self.cellVal == 0 and len(self.possibleVals) == 0:
                 return False
+        self.constrainedCells -= 1
         return True
 
 class MyBoard:
@@ -26,6 +28,8 @@ class MyBoard:
         self.board = []
         subsquare = int(math.sqrt(bsize))
         self.squaresFilled = 0
+
+        self.blankCells = []
         self.firstBlankRow = 0
         self.firstBlankColumn = 0
         self.minRemainingValues = []
@@ -36,7 +40,9 @@ class MyBoard:
                 boardCol = j // subsquare
                 boardRow = i // subsquare
                 boardSection =  boardRow * subsquare + boardCol
-                self.board[i].append(boardCell(bsize, 0, boardSection, i, j))
+                cell = boardCell(bsize, 0, boardSection, i, j)
+                self.board[i].append(cell)
+                self.blankCells.append(cell)
         #Search through board of ints for non-zero values, and set board
         for i in range(0, bsize):
             for j in range(0, bsize):
@@ -44,29 +50,29 @@ class MyBoard:
                     self.addValue(sb[i][j], i, j, True)
 
     def addValue(self, value, row, col, fwd):
-        tile = self.board[row][col]
-        tile.setCell(value)
+        cell = self.board[row][col]
+        cell.setCell(value)
         self.squaresFilled += 1
-
-        if tile in self.minRemainingValues:
-            self.minRemainingValues.remove(tile)
+        self.blankCells.remove(cell)
+        # if cell in self.minRemainingValues:
+        #     self.minRemainingValues.remove(cell)
 
         if row == self.firstBlankRow and col == self.firstBlankColumn:
             self.updateFirstBlank(row, col)
-        if fwd:  #update the possible values of affected tiles
+        if fwd:  #update the possible values of affected cells
             for i in range(self.boardSize):
                 for j in range(self.boardSize):
                     if row == i and col == j:
                         continue
-                    if self.board[i][j].boardSection == tile.boardSection:
+                    if self.board[i][j].boardSection == cell.boardSection:
                         if self.board[i][j].removePossibleVal(value) is False:
                             return False
                         continue
-                    if i == tile.row and value in self.board[i][j].possibleVals:
+                    if i == cell.row and value in self.board[i][j].possibleVals:
                         if self.board[i][j].removePossibleVal(value) is False:
                             return False
                         continue
-                    if j == tile.column and value in self.board[i][j].possibleVals:
+                    if j == cell.column and value in self.board[i][j].possibleVals:
                         if self.board[i][j].removePossibleVal(value) is False:
                             return False
         return True
@@ -101,17 +107,17 @@ class MyBoard:
                     count +=1
         return count
 
-    def findMinimumRemainingValues(self):
-        print "MIN REMAINING VALUES CALLED"
-        minRemain = float("inf")
-        for i in range(self.boardSize):
-                for j in range(self.boardSize):
-                    cell = self.board[i][j]
-                    if cell.cellVal == 0:
-                        if len(cell.possibleVals) < minRemain:
-                            self.minRemainingValues = [cell]
-                        if len(cell.possibleVals) == minRemain:
-                            self.minRemainingValues.append(cell)
+    # def findMinimumRemainingValues(self):
+    #     print "MIN REMAINING VALUES CALLED"
+    #     minRemain = float("inf")
+    #     for i in range(self.boardSize):
+    #             for j in range(self.boardSize):
+    #                 cell = self.board[i][j]
+    #                 if cell.cellVal == 0:
+    #                     if len(cell.possibleVals) < minRemain:
+    #                         self.minRemainingValues = [cell]
+    #                     if len(cell.possibleVals) == minRemain:
+    #                         self.minRemainingValues.append(cell)
 
     def getAffectedCells(self, cell):
         cellList = []
@@ -173,11 +179,11 @@ class MyBoard:
 
 
     def p(self):
-        print "============NEW Board====================="
+        """Translates our board class into initial board class and prints"""
+        intBoard = []
         for i in range(self.boardSize):
+            intBoard.append([])
             for j in range(self.boardSize):
-                if self.board[i][j].cellVal:
-                    print self.board[i][j].cellVal
-                else:
-                    print "(" + str(self.board[i][j].possibleVals) + ")"
-            print "\n"
+                intBoard[i].append(self.board[i][j].cellVal)
+        sboard = SudokuBoard(self.boardSize, intBoard)
+        sboard.print_board()
