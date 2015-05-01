@@ -16,7 +16,9 @@ class boardCell:
     def removePossibleVal(self, value):
         if value in self.possibleVals:
             self.possibleVals.remove(value)
-
+            if self.cellVal == 0 and len(self.possibleVals) == 0:
+                return False
+        return True
 
 class MyBoard:
     def __init__(self, sb, bsize):
@@ -44,13 +46,33 @@ class MyBoard:
         if fwd:
             for i in range(self.boardSize):
                 if i != col:
-                    self.board[row][i].removePossibleVal(value)
+                    if self.board[row][i].removePossibleVal(value) is False:
+                        return False
                 if i != row:
-                    self.board[i][col].removePossibleVal(value)
+                    if self.board[i][col].removePossibleVal(value) is False:
+                        return False
             subsquareMates = self.getSubsquareMates(self.board[row][col])
             for tile in subsquareMates:
-                tile.removePossibleVal(value)
+                if tile.removePossibleVal(value) is False:
+                    return False
+        return True
 
+    def removeValCount(self, tile, value):
+        count = 0
+        for i in range(self.boardSize):
+            for j in range(self.boardSize):
+                if tile.row == i and tile.column == j:
+                    continue
+                inSection = self.board[i][j].boardSection == tile.boardSection
+                if inSection:
+                    if value in self.board[i][j].possibleVals:
+                        count += 1
+                    continue
+                if i == tile.row and value in self.board[i][j].possibleVals:
+                    count +=1
+                if j == tile.column and value in self.board[i][j].possibleVals:
+                    count +=1
+        return count
 
     def getSubsquareMates(self, cell):
         currentSection = cell.boardSection
@@ -76,32 +98,32 @@ class MyBoard:
         return False
 
 
-    def checkConsistent(self, tile, typ):
-        if typ == "FWD":
-            for i in range(self.boardSize):
-                for j in range(self.boardSize):
-                    cell = self.board[i][j]
-                    if cell.cellVal == 0 and len(cell.possibleVals) == 0:
-                        return False
-            return True
-        else:
-            currentVal = tile.cellVal
-            currentRow = tile.row
-            currentColumn = tile.column
-            currentSection = tile.boardSection
-            for i in range(self.boardSize):
-                if self.board[i][currentColumn].cellVal == currentVal & i != currentRow:
-                    return False
-                if self.board[currentRow][i].cellVal == currentVal & i != currentColumn:
-                    return False
-            for i in range(self.boardSize):
-                for j in range(self.boardSize):
-                    cell = self.board[i][j]
-                    if i == currentRow & j == currentColumn:
-                        continue
-                    if cell.boardSection == currentSection & cell.cellVal == currentVal:
-                        return False
-            return True
+    # def checkConsistent(self, tile, typ):
+    #     if typ == "FWD":
+    #         for i in range(self.boardSize):
+    #             for j in range(self.boardSize):
+    #                 cell = self.board[i][j]
+    #                 if cell.cellVal == 0 and len(cell.possibleVals) == 0:
+    #                     return False
+    #         return True
+    #     else:
+    #         currentVal = tile.cellVal
+    #         currentRow = tile.row
+    #         currentColumn = tile.column
+    #         currentSection = tile.boardSection
+    #         for i in range(self.boardSize):
+    #             if self.board[i][currentColumn].cellVal == currentVal and i != currentRow:
+    #                 return False
+    #             if self.board[currentRow][i].cellVal == currentVal and i != currentColumn:
+    #                 return False
+    #         for i in range(self.boardSize):
+    #             for j in range(self.boardSize):
+    #                 cell = self.board[i][j]
+    #                 if i == currentRow and j == currentColumn:
+    #                     continue
+    #                 if cell.boardSection == currentSection and cell.cellVal == currentVal:
+    #                     return False
+    #         return True
 
 
     def p(self):
