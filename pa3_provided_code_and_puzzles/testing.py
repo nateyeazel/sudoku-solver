@@ -2,9 +2,9 @@ from action import *
 
 
 def ttest():
-    sb = parse_file("input_puzzles/easy/4_4.sudoku")
+    sb = parse_file("input_puzzles/easy/9_9.sudoku")
     m = MyBoard(sb, len(sb))
-    b = backTracking(m)
+    b = sudokuSolve(m)
     b.p()
     return b
 
