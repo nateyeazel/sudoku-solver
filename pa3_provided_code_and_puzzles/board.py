@@ -4,8 +4,7 @@ class boardCell:
     """Holds the necessary information about a cell"""
     def __init__(self, BoardSize, value, section, row, column, fwd):
         self.cellVal = value
-        if fwd:
-            self.possibleVals = set(range(1, BoardSize+1))
+        self.possibleVals = set(range(1, BoardSize+1))
         self.boardSection = section
         self.row = row
         self.column = column
@@ -71,20 +70,24 @@ class MyBoard:
         else:  #otherwise just check if the move you made messed with anything else
             return self.checkConsistent(cell)
 
-    def removeValCount(self, tile, value):
+    def removedValCount(self, tile, value):
         count = 0
-        for i in range(self.boardSize):
-            for j in range(self.boardSize):
-                if tile.row == i and tile.column == j:
+        currentRow = tile.row
+        currentColumn = tile.column
+        currentSection = tile.boardSection
+
+        for cell in self.blankCells:
+            if cell.row == currentRow:
+                if value in cell.possibleVals:
+                    count += 1
                     continue
-                if self.board[i][j].boardSection == tile.boardSection:
-                    if value in self.board[i][j].possibleVals:
-                        count += 1
+            if cell.column == currentColumn:
+                if value in cell.possibleVals:
+                    count += 1
                     continue
-                if i == tile.row and value in self.board[i][j].possibleVals:
-                    count +=1
-                if j == tile.column and value in self.board[i][j].possibleVals:
-                    count +=1
+            if cell.boardSection == currentSection:
+                if value in cell.possibleVals:
+                    count += 1
         return count
 
     def checkComplete(self):

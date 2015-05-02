@@ -115,7 +115,6 @@ def init_board(file_name):
 def solve(initial_board, forward_checking = False, MRV = False, MCV = False,
     LCV = False):
     mb = board.MyBoard(initial_board.CurrentGameBoard, initial_board.BoardSize, forward_checking)
-
     solvedBoard = action.sudokuSolve(mb, forward_checking, MRV, MCV, LCV)
 
     return solvedBoard
