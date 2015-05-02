@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 
-# crb331 - Collin Barnwell and Nathan Yeazel
+# crb331 - Collin Barnwell and npy259 - Nathan Yeazel
 
-import struct, string, math, copy, board, action
+import struct, string, math, copy
+
+globalcount = 0
+
 
 class SudokuBoard:
     """This will be the sudoku board game object your player will manipulate."""
@@ -115,14 +118,6 @@ def init_board(file_name):
     board = parse_file(file_name)
     return SudokuBoard(len(board), board)
 
-def solve(initial_board, forward_checking = False, MRV = False, MCV = False,
-    LCV = False):
-    """Required solver funciton"""
-    mb = board.MyBoard(initial_board.CurrentGameBoard, initial_board.BoardSize, forward_checking)
-    solvedBoard = action.sudokuSolve(mb, forward_checking, MRV, MCV, LCV)
-
-    return solvedBoard
-
 # BOARD.py
 
 class boardCell:
@@ -179,6 +174,9 @@ class MyBoard:
         cell.setCell(value)
         self.squaresFilled += 1
         self.blankCells.remove(cell)
+
+        global globalcount
+        globalcount += 1
 
         if fwd:   #If forward checking is on update the possible values of affected cells
             for i in range(self.boardSize):
@@ -315,3 +313,42 @@ def chooseValue(board, cell, typ):
         return list(cell.possibleVals)
     if typ == "LCV":
         return sorted(cell.possibleVals, key = lambda value: board.removedValCount(cell, value))
+
+
+# solve
+
+def solve(initial_board, forward_checking = False, MRV = False, MCV = False,
+    LCV = False):
+    """Required solver funciton"""
+    mb = MyBoard(initial_board.CurrentGameBoard, initial_board.BoardSize, forward_checking)
+    solvedBoard = sudokuSolve(mb, forward_checking, MRV, MCV, LCV)
+
+    return solvedBoard
+
+
+def t(fc, mrv, mcv, lcv):
+    global globalcount
+    globalcount = 0
+
+    sb = init_board("input_puzzles/easy/4_4.sudoku")
+    mb = solve(sb, fc, mrv, mcv, lcv)
+    mb.print_board()
+    print globalcount
+
+    globalcount = 0
+    sb = init_board("input_puzzles/easy/9_9.sudoku")
+    mb = solve(sb, fc, mrv, mcv, lcv)
+    mb.print_board()
+    print globalcount
+
+    globalcount = 0
+    sb = init_board("input_puzzles/easy/16_16.sudoku")
+    mb = solve(sb, fc, mrv, mcv, lcv)
+    mb.print_board()
+    print globalcount
+
+    globalcount = 0
+    sb = init_board("input_puzzles/easy/25_25.sudoku")
+    mb = solve(sb, fc, mrv, mcv, lcv)
+    mb.print_board()
+    print globalcount
