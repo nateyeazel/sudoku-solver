@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import struct, string, math, copy
+import struct, string, math, copy, board, action
 
 class SudokuBoard:
     """This will be the sudoku board game object your player will manipulate."""
@@ -114,16 +114,8 @@ def init_board(file_name):
 
 def solve(initial_board, forward_checking = False, MRV = False, MCV = False,
     LCV = False):
-    """Takes an initial SudokuBoard and solves it using back tracking, and zero
-    or more of the heuristics and constraint propagation methods (determined by
-    arguments). Returns the resulting board solution. """
-    print "Your code will solve the initial_board here!"
-    print "Remember to return the final board (the SudokuBoard object)."
-    print "I'm simply returning initial_board for demonstration purposes."
-    return initial_board
+    mb = board.MyBoard(initial_board.CurrentGameBoard, initial_board.BoardSize, forward_checking)
 
-# def forwardCheck(initial_board):
-# #implementing forward checking
+    solvedBoard = action.sudokuSolve(mb, forward_checking, MRV, MCV, LCV)
 
-# def MRV(initial_board):
-# #
+    return solvedBoard

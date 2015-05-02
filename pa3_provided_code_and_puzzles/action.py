@@ -1,22 +1,31 @@
 from board import *
 
-def sudokuSolve(board):
+def sudokuSolve(board, fwd, mrv, mcv, lcv):
     """The solver function which will be called with all the different types of value selection and tile selection."""
     #board.p()
     #print board.firstBlankRow, board.firstBlankColumn
+    cellHeuristic = "BASIC"
+    valueHeuristic = "BASIC"
+    if mrv:
+        cellHeuristic = "MRV"
+    if mcv:
+        cellHeuristic = "MCV"
+    if lcv:
+        valueHeuristic = "LCV"
+
     print board.squaresFilled
     bsize = board.boardSize
-    chosenCell = chooseUnassignedCell(board, "MRV")
+    chosenCell = chooseUnassignedCell(board, cellHeuristic)
 
-    valList = chooseValue(board, chosenCell, "BASIC")
+    valList = chooseValue(board, chosenCell, valueHeuristic)
     for value in valList:
         newBoard = copy.deepcopy(board)
         result = False
         # True unless no possible vals in any modified square
-        if newBoard.addValue(value, chosenCell.row, chosenCell.column, True):
+        if newBoard.addValue(value, chosenCell.row, chosenCell.column, fwd):
             if newBoard.isFull():
                 return newBoard
-            result = sudokuSolve(newBoard)
+            result = sudokuSolve(newBoard, fwd, mrv, mcv, lcv)
             if result is not False:
                 return result
     return False
@@ -57,6 +66,4 @@ def chooseValue(board, cell, typ):
     if typ == "LCV":
         l = list(cell.possibleVals)
         return sorted(l, key = lambda v: board.removeValCount(cell, v))
-
-
 
