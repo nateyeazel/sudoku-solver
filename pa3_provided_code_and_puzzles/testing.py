@@ -1,4 +1,4 @@
-from action import *
+from crb331 import *
 import time
 
 
@@ -67,3 +67,28 @@ def test25Files(fc, mrv, mcv, lcv):
         totalTime += timeLength
         print "Solved board ", i, " in ", timeLength, " seconds"
     print "It took: ", totalTime, " seconds total.\n"
+
+# def t(fc, mrv, mcv, lcv):
+
+#     sb = init_board("input_puzzles/easy/4_4.sudoku")
+#     mb = solve(sb, fc, mrv, mcv, lcv)
+#     mb.print_board()
+#     print globalcount
+
+#     # globalcount = 0
+#     sb = init_board("input_puzzles/easy/9_9.sudoku")
+#     mb = solve(sb, fc, mrv, mcv, lcv)
+#     mb.print_board()
+#     print globalcount
+
+#     # globalcount = 0
+#     sb = init_board("input_puzzles/easy/16_16.sudoku")
+#     mb = solve(sb, fc, mrv, mcv, lcv)
+#     mb.print_board()
+#     print globalcount
+
+#     # globalcount = 0
+#     sb = init_board("input_puzzles/easy/25_25.sudoku")
+#     mb = solve(sb, fc, mrv, mcv, lcv)
+#     mb.print_board()
+#     print globalcount
